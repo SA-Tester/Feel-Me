@@ -12,4 +12,4 @@ An emotion detection based music visualiser using Python and Arduino
 
 ### References
 Audio Features for Music Emotion Recognition: A Survey by Renato Panda; Ricardo Malheiro; Rui Pedro Paiva
-DOI: 10.1109/TAFFC.2020.3032373
+<br> DOI: 10.1109/TAFFC.2020.3032373
