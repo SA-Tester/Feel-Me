@@ -1,3 +1,4 @@
 .env
 .cache
 audio_analysis.csv
+__pycache__
