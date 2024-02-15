@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# import pyfirmata2
 import cv2
 from deepface import DeepFace
 
@@ -57,42 +56,3 @@ def process_stream():
     cv2.destroyAllWindows()
 
     return detected_emotions
-
-
-# Main function
-if __name__ == "__main__":
-    # Call the process stream function to begin the program
-    emotions_dict = process_stream()
-
-    # Print the dictionary of emotions
-    print(emotions_dict)
-
-    # Print the dominant emotion
-    print(max(emotions_dict, key=emotions_dict.get))
-
-
-# Function to process and the print the emotions array and the dominant emotion
-# def process_and_print():
-#     emotions_dict = process_stream()
-
-#     # Print the dictionary of emotions
-#     print(emotions_dict)
-
-#     # Print the dominant emotion
-#     print(max(emotions_dict, key=emotions_dict.get))
-
-# if __name__ == "__main__":
-#     # Create a Process
-#     p = multiprocessing.Process(target=process_and_print)
-
-#     # Start the process
-#     p.start()
-
-#     # Wait for 15 seconds or until process finishes
-#     p.join(15)
-
-#     # If thread is still active
-#     if p.is_alive():
-#         print("Process is still running, terminating now")
-#         p.terminate()
-#         p.join()
