@@ -9,6 +9,15 @@ import random
 def load_env_file():
     load_dotenv()
 
+
+# Remove existing audio_analysis.csv file
+def clear_audio_analysis_file():
+    try:
+        os.remove('audio_analysis.csv')
+    except FileNotFoundError as e:
+        print("File not found")
+
+
 # Initialize SpotifyOAuth object
 def init_spotipy():
     spotify_auth = SpotifyOAuth(client_id=os.getenv('CLIENT_ID'), client_secret=os.getenv('CLIENT_SECRET'), redirect_uri=os.getenv('REDIRECT_URL'), scope=os.getenv('SCOPE'))
@@ -18,6 +27,7 @@ def init_spotipy():
     # print("access token: ", spotify_auth.get_access_token(as_dict=False))
 
     return spotifyObj
+
 
 # Load pre-saved spotify category csv file
 def get_song_categories():
@@ -66,6 +76,43 @@ def get_audio_analysis(spotifyObj, track_id):
     return audio_analysis
 
 
+# Map pitch class to key (scale)
+def get_key(note):
+    scale = ""
+
+    if note == 0:
+        scale = "C"
+    elif note == 1:
+        scale = "C#"
+    elif note == 2:
+        scale = "D"
+    elif note == 3:
+        scale = "D#"
+    elif note == 4:
+        scale = "E"
+    elif note == 5:
+        scale = "F"
+    elif note == 6:
+        scale = "F#"
+    elif note == 7:
+        scale = "G"
+    elif note == 8:
+        scale = "G#"
+    elif note == 9:
+        scale = "A"
+    elif note == 10:
+        scale = "A#"
+    elif note == 11:
+        scale = "B"
+
+    return scale
+
+
+# Map mode to major or minor
+def get_mode(mode):
+    return "Major" if mode == 1 else "Minor"
+
+
 # Save audio features of the tracks
 def save_audio_analysis(song, audio_analysis): 
     # Check whether file already exists
@@ -76,7 +123,7 @@ def save_audio_analysis(song, audio_analysis):
         headers = [
             "track_id", 
             "track_name", 
-            "artisit_name", 
+            "artist_name", 
             "timestamp", 
             "analysis_time", 
             "num_samples", 
@@ -102,7 +149,7 @@ def save_audio_analysis(song, audio_analysis):
             {
                 "track_id": song["track_id"], 
                 "track_name": song["track_name"],
-                "artisit_name": song["artist_name"],
+                "artist_name": song["artist_name"],
                 "timestamp": audio_analysis["meta"]["timestamp"],
                 "analysis_time": audio_analysis["meta"]["analysis_time"],
                 "num_samples": audio_analysis["track"]["num_samples"],
@@ -110,9 +157,9 @@ def save_audio_analysis(song, audio_analysis):
                 "loudness": audio_analysis["track"]["loudness"],
                 "tempo": audio_analysis["track"]["tempo"],
                 "tempo_confidence": audio_analysis["track"]["tempo_confidence"],
-                "key": audio_analysis["track"]["key"],
+                "key": get_key(audio_analysis["track"]["key"]),
                 "key_confidence": audio_analysis["track"]["key_confidence"],
-                "mode": audio_analysis["track"]["mode"],
+                "mode": get_mode(audio_analysis["track"]["mode"]),
                 "mode_confidence": audio_analysis["track"]["mode_confidence"]
             }
         )
@@ -121,18 +168,14 @@ def save_audio_analysis(song, audio_analysis):
         csvfile.close()
 
 
-# Main Function
-if __name__ == "__main__":
-    # load environment variables
+def get_song_analytics():
+    # Load env file
     load_env_file()
 
-    # Remove the old audio_analysis csv file
-    try:
-        os.remove('audio_analysis.csv')
-    except FileNotFoundError as e:
-        print("File not found")
+    # Clear existing audio_analysis.csv file
+    clear_audio_analysis_file()
 
-    # Initialize SpotifyOAuth object
+    # Initialize spotipy object
     spotipyObj = init_spotipy()
 
     # Get song categories from csv file
@@ -141,7 +184,7 @@ if __name__ == "__main__":
     # Get a random category
     # Order of dict: Category Name, Category ID
     chosen_category = get_random_category(category_list)
-    print(chosen_category["name"].strip(), chosen_category["id"].strip())
+    print("Chosen Category: ", chosen_category["name"].strip(), chosen_category["id"].strip())
 
     # Get a category playlist
     # Order of tuple: Playlist Name, Playlist ID
