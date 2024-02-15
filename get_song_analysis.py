@@ -10,23 +10,23 @@ def load_env_file():
     load_dotenv()
 
 
-# Remove existing audio_analysis.csv file
-def clear_audio_analysis_file():
-    try:
-        os.remove('audio_analysis.csv')
-    except FileNotFoundError as e:
-        print("File not found")
-
-
 # Initialize SpotifyOAuth object
-def init_spotipy():
-    spotify_auth = SpotifyOAuth(client_id=os.getenv('CLIENT_ID'), client_secret=os.getenv('CLIENT_SECRET'), redirect_uri=os.getenv('REDIRECT_URL'), scope=os.getenv('SCOPE'))
+def init_spotipy(scope):
+    spotify_auth = SpotifyOAuth(client_id=os.getenv('CLIENT_ID'), client_secret=os.getenv('CLIENT_SECRET'), redirect_uri=os.getenv('REDIRECT_URL'), scope=scope)
 
     # Create a spotify object
     spotifyObj = Spotify(auth_manager=spotify_auth)
     # print("access token: ", spotify_auth.get_access_token(as_dict=False))
 
     return spotifyObj
+
+
+# Remove existing audio_analysis.csv file
+def clear_audio_analysis_file():
+    try:
+        os.remove('audio_analysis.csv')
+    except FileNotFoundError:
+        print("File not found")
 
 
 # Load pre-saved spotify category csv file
@@ -176,7 +176,7 @@ def get_song_analytics():
     clear_audio_analysis_file()
 
     # Initialize spotipy object
-    spotipyObj = init_spotipy()
+    spotipyObj = init_spotipy("")
 
     # Get song categories from csv file
     category_list = get_song_categories()
