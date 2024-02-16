@@ -1,24 +1,7 @@
-from spotipy import Spotify
-from spotipy.oauth2 import SpotifyOAuth
-from dotenv import load_dotenv
 import os
 import csv
 import random
-
-# Load .env file
-def load_env_file():
-    load_dotenv()
-
-
-# Initialize SpotifyOAuth object
-def init_spotipy(scope):
-    spotify_auth = SpotifyOAuth(client_id=os.getenv('CLIENT_ID'), client_secret=os.getenv('CLIENT_SECRET'), redirect_uri=os.getenv('REDIRECT_URL'), scope=scope)
-
-    # Create a spotify object
-    spotifyObj = Spotify(auth_manager=spotify_auth)
-    # print("access token: ", spotify_auth.get_access_token(as_dict=False))
-
-    return spotifyObj
+from init_spotipy import init_spotipy
 
 
 # Remove existing audio_analysis.csv file
@@ -168,15 +151,9 @@ def save_audio_analysis(song, audio_analysis):
         csvfile.close()
 
 
-def get_song_analytics():
-    # Load env file
-    load_env_file()
-
+def get_song_analytics(spotipyObj):
     # Clear existing audio_analysis.csv file
     clear_audio_analysis_file()
-
-    # Initialize spotipy object
-    spotipyObj = init_spotipy("")
 
     # Get song categories from csv file
     category_list = get_song_categories()
@@ -184,19 +161,22 @@ def get_song_analytics():
     # Get a random category
     # Order of dict: Category Name, Category ID
     chosen_category = get_random_category(category_list)
-    print("Chosen Category: ", chosen_category["name"].strip(), chosen_category["id"].strip())
 
     # Get a category playlist
     # Order of tuple: Playlist Name, Playlist ID
     category_playlist = get_category_playlist(spotipyObj, chosen_category["id"].strip())
-    print("Chosen Playlist: ", category_playlist)
 
     # Get a songs in the playlist
     # Order of dict: Artist, Song Name, Song ID
     playlist_songs = get_playlist_songs(spotipyObj, category_playlist[1])
-    print("Playlist Songs: ", playlist_songs)
+    # print("Playlist Songs: ", playlist_songs)
 
     # Save audio features of per track
     for song in playlist_songs:
         audio_analysis = get_audio_analysis(spotipyObj, song["track_id"])
         save_audio_analysis(song, audio_analysis)
+
+    print("\n============== CATEGORY AND PLAYLIST ================")
+    print("Chosen Category: ", chosen_category["name"].strip())
+    print("Chosen Playlist: ", category_playlist[0])
+    print("=====================================================")
