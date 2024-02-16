@@ -1,5 +1,3 @@
-from emotion_detection import process_stream
-from get_song_analysis import get_song_analytics
 import csv
 
 # For simplification process we shall asuume emotions to be either positive or negative
@@ -106,20 +104,8 @@ def get_song(dominant_emotion):
     # Close the file
     file.close()
 
-    # Iterate through the song_emotion_matrix and return the track_id of the song that matches the dominant emotion
+    # Iterate through the song_emotion_matrix and return the song object of the song that matches the dominant emotion
     for song in song_emotion_matrix:
         if song["final_decision"] == map_emotion_to_positivity(dominant_emotion):
-            return song["track_id"]
+            return song
         
-   
-# Main function
-if __name__ == "__main__":
-    # Call the process stream function to begin the program
-    emotions_dict = process_stream()
-
-    # Print the dominant emotion
-    dominant_emotion = max(emotions_dict, key=emotions_dict.get)
-    print("Dominant Emotion: ", dominant_emotion)
-
-    get_song_analytics()
-    print("Selected Track ID: ", get_song(dominant_emotion))
