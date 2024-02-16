@@ -1,7 +1,6 @@
 import os
 import csv
 import random
-from init_spotipy import init_spotipy
 
 
 # Remove existing audio_analysis.csv file
